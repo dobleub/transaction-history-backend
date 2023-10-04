@@ -19,7 +19,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
-        go-version: '1.20'
+        go-version: '1.19'
 
     - name: Install dependencies
       run: go mod tidy
@@ -38,24 +38,13 @@ jobs:
       - name: Zip build file
         run: zip release.zip build/
 
-      - name: Send Zip to S3
-        env:
-          # AWS Key ID
-          AKI: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          # AWS Key
-          AAK: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          # AWS Bucket
-          ABT: ${{ secrets.AWS_BUCKET }}
-        # You may pin to the exact commit or the version.
-        # uses: Judahh/zipToS3@217fec7ea372dbd4e2017658bc98ab7584e0552d
-        uses: Judahh/zipToS3@0.0.1
+      - name: Set AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          # Folder Name
-          folder: build
-          # AWS Key ID
-          aws_key_id: ${{ AKI }}
-          # AWS Key
-          aws_key: ${{ AAK }}
-          # AWS Bucket
-          aws_bucket: ${{ ABT }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION } }}
+
+      - name: Send Zip to S3
+        run: aws s3 cp release.zip s3://transaction-history-stori-deployments/release.zip
       
