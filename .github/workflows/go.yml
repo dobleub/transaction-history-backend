@@ -36,6 +36,7 @@ jobs:
     steps:
       - name: Zip build file
         run: zip release.zip build/
+
       - name: Send Zip to S3
         # You may pin to the exact commit or the version.
         # uses: Judahh/zipToS3@217fec7ea372dbd4e2017658bc98ab7584e0552d
@@ -44,9 +45,9 @@ jobs:
           # Folder Name
           folder: build
           # AWS Key ID
-          aws_key_id: ${{secrets.AWS_ACCESS_KEY_ID}}
+          aws_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           # AWS Key
-          aws_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          aws_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           # AWS Bucket
-          aws_bucket: ${{secrets.AWS_BUCKET}}
+          aws_bucket: ${{ secrets.AWS_BUCKET }}
       
