@@ -1,0 +1,49 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Go
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.20'
+
+    - name: Build
+      run: go build -v -buildvcs=false -o build/main main.go
+
+    - name: Test
+      run: go test -v .
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Zip build file
+        run: zip release.zip build/
+      - name: Send Zip to S3
+        # You may pin to the exact commit or the version.
+        # uses: Judahh/zipToS3@217fec7ea372dbd4e2017658bc98ab7584e0552d
+        uses: Judahh/zipToS3@0.0.1
+        with:
+          # Folder Name
+          folder: build
+          # AWS Key ID
+          aws_key_id: ${{secrets.AWS_ACCESS_KEY_ID}}
+          # AWS Key
+          aws_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          # AWS Bucket
+          aws_bucket: ${{secrets.AWS_BUCKET}}
+      
