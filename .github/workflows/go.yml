@@ -27,24 +27,19 @@ jobs:
     - name: Test
       run: go test -v .
 
-  deploy:
-    # This job deploys to S3
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Build
-        run: go build -v -buildvcs=false -o build/main main.go
+    - name: Build
+      run: go build -v -buildvcs=false -o build/main main.go
 
-      - name: Zip build file
-        run: zip release.zip build/
+    - name: Zip build file
+      run: zip release.zip build/
 
-      - name: Set AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+    - name: Set AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Send Zip to S3
-        run: aws s3 cp release.zip s3://transaction-history-stori-deployments/release.zip
+    - name: Send Zip to S3
+      run: aws s3 cp release.zip s3://transaction-history-stori-deployments/release.zip
       
