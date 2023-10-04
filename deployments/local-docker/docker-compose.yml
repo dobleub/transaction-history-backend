@@ -14,7 +14,11 @@ services:
       - GOOS=linux
       - GOARCH=amd64
       - ENV=debug
-      
+      - PORT=${PORT}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      - AWS_BUCKET=${AWS_BUCKET}
     volumes: 
       - ../../:/go/src/transactions-history
     networks:

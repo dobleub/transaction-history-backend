@@ -24,3 +24,6 @@ go.work
 
 # env
 .env
+
+# Build app
+build/
