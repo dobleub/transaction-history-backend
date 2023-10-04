@@ -23,9 +23,6 @@ jobs:
 
     - name: Install dependencies
       run: go mod tidy
-    
-    - name: Build
-      run: go build -v -buildvcs=false -o build/main main.go
 
     - name: Test
       run: go test -v .
@@ -35,6 +32,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Build
+        run: go build -v -buildvcs=false -o build/main main.go
+
       - name: Zip build file
         run: zip release.zip build/
 
