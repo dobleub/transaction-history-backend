@@ -47,4 +47,7 @@ jobs:
 
     - name: Send Zip to S3
       run: aws s3 cp release.zip s3://transaction-history-stori-deployments/release.zip
+
+    - name: Deploy to Lamnda
+      run: aws lambda update-function-code --function-name transaction-history-stori --s3-bucket transaction-history-stori-deployments --s3-key release.zip
       
