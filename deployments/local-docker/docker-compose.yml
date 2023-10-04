@@ -1,0 +1,32 @@
+version: '3.3'
+
+services: 
+  customer_profile_app:
+    container_name: 'transactions-history-backend'
+    build: 
+      context: ../../
+      dockerfile: ./deployments/local-docker/dev.dockerfile
+    restart: unless-stopped
+    environment:
+      - GO111MODULE=on
+      - GOPROXY=https://proxy.golang.org,direct
+      - CGO_ENABLED=0
+      - GOOS=linux
+      - GOARCH=amd64
+      - ENV=debug
+      - PORT=${PORT}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      - AWS_BUCKET=${AWS_BUCKET}
+    volumes: 
+      - ../../:/go/src/transactions-history
+    networks:
+      - stori-transactions-history-network
+    ports:
+      # gin proxy port
+      - "3003:3030"
+
+networks:
+  stori-transactions-history-network:
+    external: true
