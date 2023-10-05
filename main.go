@@ -32,9 +32,9 @@ func main() {
 		http.Error(w, fmt.Sprintf("Not found: %s", r.RequestURI), http.StatusNotFound)
 	})
 
-	s := r.PathPrefix("/default").Subrouter()
-	s.HandleFunc("/", transactions.HandleVersion).Methods(http.MethodGet)
-	s.Use(loggingMiddleware)
+	// s := r.PathPrefix("/default").Subrouter()
+	r.HandleFunc("/", transactions.HandleVersion).Methods(http.MethodGet)
+	r.Use(loggingMiddleware)
 
 	runtime_api := env.AWSConfig.Lambda
 	if runtime_api != "" {
