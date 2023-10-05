@@ -1,0 +1,14 @@
+[
+	{
+		"name": "Handler Version Test",
+		"desc": "Test the version of the handler",
+		"req": null,
+		"res": null,
+		"expected": {
+			"body": {
+        "version": "1.0.1 - 2021-09-30 - transactions-history"
+      },
+			"status": 200
+		}
+	}
+]

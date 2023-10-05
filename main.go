@@ -32,7 +32,7 @@ func main() {
 		http.Error(w, fmt.Sprintf("Not found: %s", r.RequestURI), http.StatusNotFound)
 	})
 
-	// s := r.PathPrefix("/default").Subrouter()
+	// s := r.PathPrefix("/default").Subrouter()	// could use when run with API Gateway
 	r.HandleFunc("/", transactions.HandleVersion).Methods(http.MethodGet)
 	r.Use(loggingMiddleware)
 
