@@ -4,13 +4,11 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-
-	"github.com/dobleub/transaction-history-backend/internal/transactions"
 )
 
 func ServeHandlerFunc(handlerFunc http.HandlerFunc, req *http.Request) (*httptest.ResponseRecorder, error) {
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(transactions.HandleVersion)
+	handler := http.HandlerFunc(handlerFunc)
 	handler.ServeHTTP(rr, req)
 
 	if status := rr.Code; status != http.StatusOK {
