@@ -4,8 +4,6 @@
 name: Go
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
@@ -50,4 +48,4 @@ jobs:
 
     - name: Deploy to AWS Lambda
       run: aws lambda update-function-code --function-name transaction-history-service --s3-bucket transaction-history-stori-deployments --s3-key release.zip
-      
+

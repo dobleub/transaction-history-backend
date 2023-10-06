@@ -1,0 +1,15 @@
+[
+	{
+		"name": "Handler Version Test",
+		"req": {
+			"url": "/transactions/user/1",
+			"method": "GET"
+    },
+		"expected": {
+			"body": {
+        "version": "1.0.1 - 2021-09-30 - transactions-history"
+      },
+			"status": 200
+		}
+	}
+]
