@@ -51,9 +51,6 @@ jobs:
 
     - name: Deploy to AWS Lambda
       run: aws lambda update-function-code --function-name transaction-history-service --s3-bucket transaction-history-stori-deployments --s3-key release.zip
-      
-    - name: Update Lambda alias
-      run: aws lambda update-alias --function-name transaction-history-service --name stable --function-version 1
 
     - name: Update weights
       run: aws lambda update-alias --function-name transaction-history-service --name stable --routing-config AdditionalVersionWeights={}
