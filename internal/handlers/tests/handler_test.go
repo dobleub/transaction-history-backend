@@ -1,16 +1,29 @@
 package tests
 
 import (
+	"context"
 	"net/http"
 	"strings"
 	"testing"
 
+	"github.com/dobleub/transaction-history-backend/internal/config"
 	"github.com/dobleub/transaction-history-backend/internal/handlers"
 	"github.com/dobleub/transaction-history-backend/internal/helpers"
 	"github.com/dobleub/transaction-history-backend/internal/models"
 	"github.com/gorilla/mux"
+	"github.com/sethvargo/go-envconfig"
 	"github.com/stretchr/testify/assert"
 )
+
+var env *config.Config
+
+func TestMain(m *testing.M) {
+	var tmpEnv config.Config
+	envconfig.ProcessWith(context.Background(), &tmpEnv, envconfig.OsLookuper())
+
+	env = &tmpEnv
+	m.Run()
+}
 
 // HandleVersion is a test function for the transactions package
 func TestHandlerVersion(t *testing.T) {
@@ -81,7 +94,9 @@ func TestHandlerTransactions(t *testing.T) {
 			}
 
 			req = mux.SetURLVars(req, tt.Req.Vars)
-			rr, err := helpers.ServeHandlerFunc(handlers.HandleTransactions, req)
+			rr, err := helpers.ServeHandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				handlers.HandleTransactions(env, w, r)
+			}, req)
 			if err != nil {
 				t.Error(err)
 			}
@@ -125,7 +140,9 @@ func TestHandlerSummary(t *testing.T) {
 			}
 
 			req = mux.SetURLVars(req, tt.Req.Vars)
-			rr, err := helpers.ServeHandlerFunc(handlers.HandleSummary, req)
+			rr, err := helpers.ServeHandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				handlers.HandleSummary(env, w, r)
+			}, req)
 			if err != nil {
 				t.Error(err)
 			}

@@ -19,7 +19,7 @@ import (
  * @return void
  *
  */
-func HandlerSendEmail(env *config.EmailConfig, w http.ResponseWriter, r *http.Request) {
+func HandlerSendEmail(env *config.Config, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userId := vars["userid"]
 	emailTo := vars["emailto"]
@@ -28,7 +28,7 @@ func HandlerSendEmail(env *config.EmailConfig, w http.ResponseWriter, r *http.Re
 		UserId: helpers.StringToInt32(userId),
 	}
 
-	summary, err := user.GetSummary()
+	summary, err := user.GetSummary(env)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -42,7 +42,7 @@ func HandlerSendEmail(env *config.EmailConfig, w http.ResponseWriter, r *http.Re
 	summaryEmailBody := summary.GetSummaryEmailData()
 	emailBody := email_templates.GenerateSummaryEmailBody(summaryEmailBody)
 	// Send email
-	mailErr := email.SendEmail(env, "Stori Test<no-reply-info@godin.app>", emailTo, summaryEmailBody.Subject, emailBody, "")
+	mailErr := email.SendEmail(&env.EmailConfig, "Stori Test<no-reply-info@godin.app>", emailTo, summaryEmailBody.Subject, emailBody, "")
 	if mailErr != nil {
 		http.Error(w, mailErr.Error(), http.StatusInternalServerError)
 		return

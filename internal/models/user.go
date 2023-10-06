@@ -1,8 +1,11 @@
 package models
 
 import (
+	"fmt"
 	"strings"
 
+	"github.com/dobleub/transaction-history-backend/internal/config"
+	"github.com/dobleub/transaction-history-backend/internal/errors"
 	"github.com/dobleub/transaction-history-backend/internal/helpers"
 )
 
@@ -14,15 +17,18 @@ func (u *User) GetUserId() int32 {
 	return u.UserId
 }
 
-func (u *User) GetTransactions() ([]Transaction, error) {
+func (u *User) GetTransactions(env *config.Config) ([]Transaction, error) {
 	var transactions []Transaction
 
-	csvFile, err := helpers.ReadCSVFile("data/transactions.csv")
+	data, err := helpers.DownloadCSVFileFromAWS(&env.AWSConfig, "transactions.csv")
 	if err != nil {
-		return transactions, err
+		return nil, err
+	}
+	if len(data) == 0 {
+		return nil, fmt.Errorf(errors.ErrTransactionsNotFound)
 	}
 
-	for _, line := range csvFile {
+	for _, line := range data {
 		tmpUserId := helpers.StringToInt32(line[1])
 		if tmpUserId != u.GetUserId() {
 			continue
@@ -39,8 +45,8 @@ func (u *User) GetTransactions() ([]Transaction, error) {
 	return transactions, nil
 }
 
-func (u *User) GetTransactionsPerMonth() (map[string]TransactionsPerMonth, error) {
-	transactions, err := u.GetTransactions()
+func (u *User) GetTransactionsPerMonth(env *config.Config) (map[string]TransactionsPerMonth, error) {
+	transactions, err := u.GetTransactions(env)
 	if err != nil {
 		return nil, err
 	}
@@ -68,11 +74,11 @@ func (u *User) GetTransactionsPerMonth() (map[string]TransactionsPerMonth, error
 	return transactionsPerMonth, nil
 }
 
-func (u *User) GetSummary() (Summary, error) {
+func (u *User) GetSummary(env *config.Config) (Summary, error) {
 	var summary Summary
 	var incomeTransactions, expenseTransactions int
 
-	transactions, err := u.GetTransactions()
+	transactions, err := u.GetTransactions(env)
 	if err != nil {
 		return summary, err
 	}
@@ -100,7 +106,7 @@ func (u *User) GetSummary() (Summary, error) {
 	summary.AverageDebitAmount = summary.TotalExpense / float64(expenseTransactions)
 
 	// Transactions per month
-	transactionsPerMonth, err := u.GetTransactionsPerMonth()
+	transactionsPerMonth, err := u.GetTransactionsPerMonth(env)
 	if err != nil {
 		return summary, err
 	}

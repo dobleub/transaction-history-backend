@@ -1,10 +1,23 @@
 package tests
 
 import (
+	"context"
 	"testing"
 
+	"github.com/dobleub/transaction-history-backend/internal/config"
 	"github.com/dobleub/transaction-history-backend/internal/models"
+	"github.com/sethvargo/go-envconfig"
 )
+
+var env *config.Config
+
+func TestMain(m *testing.M) {
+	var tmpEnv config.Config
+	envconfig.ProcessWith(context.Background(), &tmpEnv, envconfig.OsLookuper())
+
+	env = &tmpEnv
+	m.Run()
+}
 
 func TestGetUserId(t *testing.T) {
 	t.Run("GetUserId", func(t *testing.T) {
@@ -36,7 +49,7 @@ func TestGetTransactions(t *testing.T) {
 			UserId: 1,
 		}
 
-		transactions, err := user.GetTransactions()
+		transactions, err := user.GetTransactions(env)
 		if err != nil {
 			t.Errorf("Expected nil, got %v", err)
 		}
@@ -51,7 +64,7 @@ func TestGetTransactions(t *testing.T) {
 			UserId: 999,
 		}
 
-		transactions, err := user.GetTransactions()
+		transactions, err := user.GetTransactions(env)
 		if err != nil {
 			t.Errorf("Expected nil, got %v", err)
 		}
@@ -68,7 +81,7 @@ func TestGetTransactionsPerMonth(t *testing.T) {
 			UserId: 1,
 		}
 
-		transactionsPerMonth, err := user.GetTransactionsPerMonth()
+		transactionsPerMonth, err := user.GetTransactionsPerMonth(env)
 		if err != nil {
 			t.Errorf("Expected nil, got %v", err)
 		}
@@ -83,7 +96,7 @@ func TestGetTransactionsPerMonth(t *testing.T) {
 			UserId: 999,
 		}
 
-		transactionsPerMonth, err := user.GetTransactionsPerMonth()
+		transactionsPerMonth, err := user.GetTransactionsPerMonth(env)
 		if err != nil {
 			t.Errorf("Expected nil, got %v", err)
 		}
@@ -100,7 +113,7 @@ func TestGetSummary(t *testing.T) {
 			UserId: 1,
 		}
 
-		summary, err := user.GetSummary()
+		summary, err := user.GetSummary(env)
 		if err != nil {
 			t.Errorf("Expected nil, got %v", err)
 		}
@@ -115,7 +128,7 @@ func TestGetSummary(t *testing.T) {
 			UserId: 999,
 		}
 
-		summary, err := user.GetSummary()
+		summary, err := user.GetSummary(env)
 		if err != nil {
 			t.Errorf("Expected nil, got %v", err)
 		}

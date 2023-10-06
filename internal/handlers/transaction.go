@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/dobleub/transaction-history-backend/internal/config"
 	"github.com/dobleub/transaction-history-backend/internal/helpers"
 	"github.com/dobleub/transaction-history-backend/internal/models"
 	"github.com/gorilla/mux"
@@ -39,7 +40,7 @@ func HandleVersion(w http.ResponseWriter, r *http.Request) {
  * 2. Loop through CSV file
  * 3. If user id matches, append to transactions slice
  */
-func HandleTransactions(w http.ResponseWriter, r *http.Request) {
+func HandleTransactions(env *config.Config, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userId := vars["userid"]
 
@@ -47,7 +48,7 @@ func HandleTransactions(w http.ResponseWriter, r *http.Request) {
 		UserId: helpers.StringToInt32(userId),
 	}
 
-	transactions, err := user.GetTransactions()
+	transactions, err := user.GetTransactions(env)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -82,7 +83,7 @@ func HandleTransactions(w http.ResponseWriter, r *http.Request) {
  * 5. Return summary and transactions
  */
 
-func HandleSummary(w http.ResponseWriter, r *http.Request) {
+func HandleSummary(env *config.Config, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userId := vars["userid"]
 
@@ -90,7 +91,7 @@ func HandleSummary(w http.ResponseWriter, r *http.Request) {
 		UserId: helpers.StringToInt32(userId),
 	}
 
-	summary, err := user.GetSummary()
+	summary, err := user.GetSummary(env)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

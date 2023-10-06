@@ -9,4 +9,6 @@ const (
 	ErrFileNotJSON = "file is not a JSON file"
 	// ErrFileNotYAML is returned when a file is not a YAML file
 	ErrFileNotYAML = "file is not a YAML file"
+	// Transactions not found
+	ErrTransactionsNotFound = "no transactions found"
 )
