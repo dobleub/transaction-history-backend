@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -17,14 +16,9 @@ func loggingMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func notFoundHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("Not found", r.RequestURI)
-	http.Error(w, fmt.Sprintf("Not found: %s", r.RequestURI), http.StatusNotFound)
-}
-
 func Routes(env config.Config) *mux.Router {
 	r := mux.NewRouter()
-	r.NotFoundHandler = http.HandlerFunc(notFoundHandler)
+	r.NotFoundHandler = http.HandlerFunc(handlers.NotFoundHandler)
 
 	// s := r.PathPrefix("/default").Subrouter()	// could use when run with API Gateway
 	r.HandleFunc("/", handlers.HandleVersion).Methods(http.MethodGet)
