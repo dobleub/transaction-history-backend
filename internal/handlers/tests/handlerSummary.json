@@ -12,31 +12,16 @@
 			"body": {
         "totalBalance": 1603.25,
         "totalIncome": 3664.35,
-        "totalExpense": -2061.1,
+        "totalExpense": -2061.1000000000004,
         "transactionsPerMonth": {
-          "april": {
-            "amount": 3.1900000000000084,
-            "total": 9
-          },
-          "february": {
-            "amount": 782.7,
-            "total": 8
-          },
-          "january": {
-            "amount": -82.2,
-            "total": 11
-          },
-          "march": {
-            "amount": 779.35,
-            "total": 13
-          },
-          "may": {
-            "amount": 120.21,
-            "total": 1
-          }
+          "april": { "amount": 3.1899999999999835, "total": 9 },
+          "february": { "amount": 782.7, "total": 8 },
+          "january": { "amount": -82.19999999999999, "total": 11 },
+          "march": { "amount": 779.3500000000003, "total": 13 },
+          "may": { "amount": 120.21, "total": 1 }
         },
         "averageCreditAmount": 174.49285714285713,
-        "averageDebitAmount": -98.14761904761905
+        "averageDebitAmount": -98.14761904761906
       },
 			"status": 200
 		}
