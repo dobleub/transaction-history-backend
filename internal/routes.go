@@ -22,6 +22,9 @@ func Routes(env config.Config) *mux.Router {
 
 	// s := r.PathPrefix("/default").Subrouter()	// could use when run with API Gateway
 	r.HandleFunc("/", handlers.HandleVersion).Methods(http.MethodGet)
+	r.HandleFunc("/users", func(w http.ResponseWriter, r *http.Request) {
+		handlers.HandleUsers(&env, w, r)
+	}).Methods(http.MethodGet)
 	r.HandleFunc("/transactions/user/{userid}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.HandleTransactions(&env, w, r)
 	}).Methods(http.MethodGet)
