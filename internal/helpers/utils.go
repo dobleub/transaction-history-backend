@@ -11,9 +11,17 @@ import (
 	"github.com/leekchan/accounting"
 )
 
+func IsValidUserId(userId string) bool {
+	return StringToInt32(userId) > 0
+}
+
 func StringToInt32(str string) int32 {
 	i, _ := strconv.Atoi(str)
 	return int32(i)
+}
+
+func Int32ToString(i int32) string {
+	return strconv.Itoa(int(i))
 }
 
 func StringToInt64(str string) int64 {
@@ -114,6 +122,6 @@ func ObjectToJsonString(obj interface{}) string {
 
 func Capitalize(str string) string {
 	runes := []rune(str)
-  runes[0] = unicode.ToUpper(runes[0])
-  return string(runes)
+	runes[0] = unicode.ToUpper(runes[0])
+	return string(runes)
 }

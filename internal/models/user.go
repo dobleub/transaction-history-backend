@@ -10,7 +10,62 @@ import (
 )
 
 type User struct {
-	UserId int32 `json:"userId"`
+	UserId       int32   `json:"userId"`
+	Name         string  `json:"name"`
+	TotalBalance float64 `json:"totalBalance"`
+}
+
+func GetTransactionsData(env *config.Config) ([][]string, error) {
+	var data [][]string
+	var err error
+
+	if env.AWSConfig.Lambda != "" {
+		data, err = helpers.DownloadCSVFileFromAWS(&env.AWSConfig, "transactions.csv")
+	} else {
+		data, err = helpers.ReadCSVFile("data/transactions.csv")
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func GetUsers(env *config.Config) ([]User, error) {
+	data, _ := GetTransactionsData(env)
+
+	if len(data) == 0 {
+		return nil, fmt.Errorf(errors.ErrTransactionsNotFound)
+	}
+
+	var users []User
+	var tmpUsers = make(map[int32]User)
+	for _, line := range data {
+		userId := helpers.StringToInt32(line[1])
+		if userId == 0 {
+			continue
+		}
+
+		if _, ok := tmpUsers[userId]; !ok {
+			user := User{
+				UserId:       userId,
+				Name:         line[2],
+				TotalBalance: 0.0,
+			}
+			tmpUsers[userId] = user
+		}
+		tmpUsers[userId] = User{
+			UserId:       userId,
+			Name:         tmpUsers[userId].Name,
+			TotalBalance: tmpUsers[userId].TotalBalance + helpers.StringToFloat64(line[4]),
+		}
+	}
+
+	for _, user := range tmpUsers {
+		users = append(users, user)
+	}
+
+	return users, nil
 }
 
 func (u *User) GetUserId() int32 {
@@ -20,13 +75,20 @@ func (u *User) GetUserId() int32 {
 func (u *User) GetTransactions(env *config.Config) ([]Transaction, error) {
 	var transactions []Transaction
 
-	data, err := helpers.DownloadCSVFileFromAWS(&env.AWSConfig, "transactions.csv")
-	if err != nil {
-		return nil, err
+	isValildUserId := helpers.IsValidUserId(helpers.Int32ToString(u.GetUserId()))
+
+	if !isValildUserId {
+		return nil, fmt.Errorf(errors.ErrUserIdNotValid)
 	}
+
+	data, _ := GetTransactionsData(env)
 	if len(data) == 0 {
 		return nil, fmt.Errorf(errors.ErrTransactionsNotFound)
 	}
+
+	// sort transactions by date, this is a helper function because if this info comes from DB
+	// we can use ORDER BY date DESC
+	data = helpers.SortByDate(data, "desc")
 
 	for _, line := range data {
 		tmpUserId := helpers.StringToInt32(line[1])
@@ -36,8 +98,8 @@ func (u *User) GetTransactions(env *config.Config) ([]Transaction, error) {
 		transaction := Transaction{
 			TransactionId: helpers.StringToInt32(line[0]),
 			UserId:        tmpUserId,
-			Date:          line[2],
-			Transaction:   helpers.StringToFloat64(line[3]),
+			Date:          line[3],
+			Transaction:   helpers.StringToFloat64(line[4]),
 		}
 		transactions = append(transactions, transaction)
 	}

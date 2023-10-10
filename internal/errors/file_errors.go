@@ -11,4 +11,8 @@ const (
 	ErrFileNotYAML = "file is not a YAML file"
 	// Transactions not found
 	ErrTransactionsNotFound = "no transactions found"
+	// User not found
+	ErrUserNotFound = "user not found"
+	// User ID not valid
+	ErrUserIdNotValid = "user ID not valid"
 )
