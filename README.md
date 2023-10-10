@@ -63,7 +63,8 @@ docker rm transactions-history-backend
 2. Make some changes
 3. Push the changes to the repository at `develop` branch
 4. Create a pull request to `master` branch
-5. Once the pull request is approved, the changes will be deployed automatically to production environment
+- The pull request action trigger a Github Action that runs the tests, build and deploy the application into a $LATEST version of the lambda function, this is done using the `.github/workflows/go-latest.yml` file
+5. Once the pull request is approved, the changes will be deployed automatically to production environment at New Version (current v3) of the lambda function using the `.github/workflows/go-stable.yml` file
 
 ## How to run tests
 1. Follow previous steps to clone the repository and build the docker image
